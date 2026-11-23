@@ -129,6 +129,17 @@ footer a{color:var(--muted)}
 }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
 </style>
+<!-- Meta Pixel: conta visitas e cliques em "comprar" -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','1469933815079190');
+fbq('track','PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=1469933815079190&ev=PageView&noscript=1"></noscript>
 </head>
 <body>
 
@@ -306,6 +317,26 @@ footer a{color:var(--muted)}
     var s=out.toString();
     document.querySelectorAll('.js-buy').forEach(function(a){ a.href=a.href.split('?')[0]+'?'+s; });
   }catch(e){}
+})();
+</script>
+<script>
+// Conta cliques em "comprar" (InitiateCheckout) antes de ir para a Hotmart.
+(function(){
+  var lido=false;
+  document.querySelectorAll('.js-buy').forEach(function(a,i){
+    a.addEventListener('click',function(ev){
+      if(ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.button===1) return;
+      var href=a.href;
+      try{ if(window.fbq) fbq('track','InitiateCheckout',{value:14.90,currency:'BRL',content_name:'A sombra na igreja',content_category:'botao-'+(i+1)}); }catch(e){}
+      ev.preventDefault();
+      setTimeout(function(){ location.href=href; },300);
+    });
+  });
+  // Leitura: conta quem rolou ate a secao do autor
+  var alvo=document.querySelector('.author-box');
+  if(alvo && 'IntersectionObserver' in window){
+    new IntersectionObserver(function(es,o){ es.forEach(function(e){ if(e.isIntersecting&&!lido){ lido=true; try{ fbq('track','ViewContent',{content_name:'leu-ate-autor'}); }catch(x){} o.disconnect(); } }); }).observe(alvo);
+  }
 })();
 </script>
 </body>
